@@ -9,10 +9,7 @@ const makeupSchema = new Schema({
     type: String,
     required: true,
   },
-  readyTime: {
-    type: String,
-    required: true,
-  },
+
   occasion: {
     type: String,
     default: "",
@@ -35,6 +32,10 @@ const makeupSchema = new Schema({
         type: Date,
         required: true,
         min: new Date(),
+      },
+      readyTime: {
+        type: String,
+        required: true,
       },
     },
   ],

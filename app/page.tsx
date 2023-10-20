@@ -27,11 +27,10 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { createMakeup } from "@/lib/actions/makeup.action";
 
-export default function Home() {
+const Home = () => {
   const schema = z.object({
     name: z.string().min(3).max(30),
     contact: z.string().min(10).max(10),
-    readyTime: z.string().min(1).max(30),
     occasion: z.string(),
     skinAllergy: z.string(),
     alternateContact: z.string(),
@@ -39,6 +38,7 @@ export default function Home() {
       z.object({
         location: z.string().min(3).max(100),
         date: z.date().min(new Date()),
+        readyTime: z.string().min(1).max(30),
       })
     ),
   });
@@ -49,7 +49,6 @@ export default function Home() {
     defaultValues: {
       name: "",
       contact: "",
-      readyTime: "",
       occasion: "",
       skinAllergy: "",
       alternateContact: "",
@@ -57,6 +56,7 @@ export default function Home() {
         {
           location: "",
           date: new Date(),
+          readyTime: "",
         },
       ],
     },
@@ -154,19 +154,7 @@ export default function Home() {
                 </FormItem>
               )}
             />
-            <FormField
-              name="readyTime"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="ready">Ready Time</FormLabel>
-                  <FormControl {...field}>
-                    <Input placeholder="Ready Time..." id="ready" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <FormField
               name="occasion"
               control={form.control}
@@ -203,7 +191,9 @@ export default function Home() {
               <Button
                 className="!p-5"
                 type="button"
-                onClick={() => append({ location: "", date: new Date() })}
+                onClick={() =>
+                  append({ location: "", date: new Date(), readyTime: "" })
+                }
               >
                 <Plus width={20} height={20} />
               </Button>
@@ -220,6 +210,21 @@ export default function Home() {
                       </FormLabel>
                       <FormControl {...field}>
                         <Input placeholder="Location..." id="location" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  name={`makeups.${index}.readyTime`}
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="ready">
+                        Ready Time for {convertToOrdinal(index + 1)} makeup
+                      </FormLabel>
+                      <FormControl {...field}>
+                        <Input placeholder="Ready Time..." id="ready" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -281,4 +286,6 @@ export default function Home() {
       </Form>
     </main>
   );
-}
+};
+
+export default Home;
