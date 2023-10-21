@@ -34,13 +34,15 @@ const Home = () => {
     occasion: z.string(),
     skinAllergy: z.string(),
     alternateContact: z.string(),
-    makeups: z.array(
-      z.object({
-        location: z.string().min(3).max(100),
-        date: z.date().min(new Date()),
-        readyTime: z.string().min(1).max(30),
-      })
-    ),
+    makeups: z
+      .array(
+        z.object({
+          location: z.string().min(3).max(100),
+          date: z.date().min(new Date()),
+          readyTime: z.string().min(1).max(30),
+        })
+      )
+      .min(1, "Please add at least one makeup slot"),
   });
 
   type Schema = z.infer<typeof schema>;
@@ -198,6 +200,11 @@ const Home = () => {
                 <Plus width={20} height={20} />
               </Button>
             </div>
+            {form.formState.errors.makeups && (
+              <p className="text-red-500">
+                {form.formState.errors.makeups.message}
+              </p>
+            )}
             {fields.map((field, index) => (
               <div key={field.id} className="my-5 flex flex-col gap-3.5">
                 <FormField
