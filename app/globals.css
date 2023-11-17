@@ -5,3 +5,8 @@
 .app {
   @apply min-h-screen flex flex-col;
 }
+
+button[aria-selected][name="day"] {
+  background-color: black;
+  color: white;
+}

@@ -25,8 +25,12 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { createMakeup } from "@/lib/actions/makeup.action";
+import { useState } from "react";
+
+type Modal = Record<string, boolean>;
 
 const BookingForm = () => {
+  const [isOpen, setIsOpen] = useState<Modal>({});
   const schema = z.object({
     name: z.string().min(3).max(30),
     contact: z.string().min(10).max(10),
@@ -226,7 +230,14 @@ const BookingForm = () => {
                       Date for {convertToOrdinal(index + 1)} makeup
                     </FormLabel>
                     <FormControl>
-                      <Popover>
+                      <Popover
+                        open={isOpen[`date-${index + 1}`]}
+                        onOpenChange={(open) => {
+                          setIsOpen((prev) => {
+                            return { ...prev, [`date-${index + 1}`]: open };
+                          });
+                        }}
+                      >
                         <PopoverTrigger asChild>
                           <Button
                             type="button"
@@ -239,7 +250,21 @@ const BookingForm = () => {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="max-w-none w-fit p-0">
-                          <Calendar onSelect={field.onChange} mode="single" />
+                          <Calendar
+                            onSelect={(date) => {
+                              setIsOpen((prev) => {
+                                return {
+                                  ...prev,
+                                  [`date-${index + 1}`]: false,
+                                };
+                              });
+                              field.onChange(date);
+                            }}
+                            mode="single"
+                            selected={field.value}
+                            ISOWeek
+                            fromDate={new Date()}
+                          />
                         </PopoverContent>
                       </Popover>
                     </FormControl>
