@@ -85,7 +85,6 @@ export const createMakeup = async (props: MakeupType) => {
             </div>
           </div>
         </div>
-      </html>
 
       `,
     });
