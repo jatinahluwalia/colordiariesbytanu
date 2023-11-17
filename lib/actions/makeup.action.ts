@@ -12,19 +12,13 @@ export const createMakeup = async (props: MakeupType) => {
 
     transporter.sendMail({
       to: "ahluwalia.tanu@gmail.com",
+      subject: `Makeup Booking for ${props.name}`,
       html: `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <style>
             @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
           </style>
-          <title>Document</title>
-        </head>
-        <body
-          style="font-family: 'Roboto'; margin: 0; padding: 0; box-sizing: border-box"
+        <div
+          style="font-family: 'Roboto'; box-sizing: border-box"
         >
           <div style="padding-inline: min(5rem, 5vw)">
             <h1>Hello Tanu, we have a new booking for you!</h1>
@@ -90,7 +84,7 @@ export const createMakeup = async (props: MakeupType) => {
               </div>
             </div>
           </div>
-        </body>
+        </div>
       </html>
 
       `,
