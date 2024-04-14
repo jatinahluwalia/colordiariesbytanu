@@ -1,4 +1,11 @@
-import { InferSchemaType, model, models, Schema } from "mongoose";
+import {
+  InferSchemaType,
+  Model,
+  model,
+  models,
+  Schema,
+  Document,
+} from 'mongoose';
 
 const makeupSchema = new Schema({
   name: {
@@ -12,15 +19,15 @@ const makeupSchema = new Schema({
 
   occasion: {
     type: String,
-    default: "",
+    default: '',
   },
   skinAllergy: {
     type: String,
-    default: "",
+    default: '',
   },
   alternateContact: {
     type: String,
-    default: "",
+    default: '',
   },
   makeups: [
     {
@@ -41,8 +48,9 @@ const makeupSchema = new Schema({
   ],
 });
 
-export type MakeupType = InferSchemaType<typeof makeupSchema>;
+export type MakeupType = Document & InferSchemaType<typeof makeupSchema>;
 
-const Makeup = models.Makeup || model<MakeupType>("Makeup", makeupSchema);
+const Makeup: Model<MakeupType> =
+  models.Makeup || model('Makeup', makeupSchema);
 
 export default Makeup;

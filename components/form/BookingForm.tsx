@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -11,80 +10,80 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
-import { convertToOrdinal } from "@/lib/utils";
-import { Plus, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import { convertToOrdinal } from '@/lib/utils';
+import { Plus, Trash } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { toast } from "sonner";
-import { createMakeup } from "@/lib/actions/makeup.action";
-import { useState } from "react";
+} from '@/components/ui/popover';
+import { toast } from 'sonner';
+import { createMakeup } from '@/lib/actions/makeup.action';
+import { useState } from 'react';
 
 type Modal = Record<string, boolean>;
 
+const schema = z.object({
+  name: z.string().min(3).max(30),
+  contact: z.string().min(10).max(10),
+  occasion: z.string(),
+  skinAllergy: z.string(),
+  alternateContact: z.string(),
+  makeups: z
+    .array(
+      z.object({
+        location: z.string().min(3).max(100),
+        date: z.date().min(new Date()),
+        readyTime: z.string().min(1).max(30),
+      }),
+    )
+    .min(1, 'Please add at least one makeup slot'),
+});
+
+export type Schema = z.infer<typeof schema>;
 const BookingForm = () => {
   const [isOpen, setIsOpen] = useState<Modal>({});
-  const schema = z.object({
-    name: z.string().min(3).max(30),
-    contact: z.string().min(10).max(10),
-    occasion: z.string(),
-    skinAllergy: z.string(),
-    alternateContact: z.string(),
-    makeups: z
-      .array(
-        z.object({
-          location: z.string().min(3).max(100),
-          date: z.date().min(new Date()),
-          readyTime: z.string().min(1).max(30),
-        })
-      )
-      .min(1, "Please add at least one makeup slot"),
-  });
-
-  type Schema = z.infer<typeof schema>;
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      contact: "",
-      occasion: "",
-      skinAllergy: "",
-      alternateContact: "",
+      name: '',
+      contact: '',
+      occasion: '',
+      skinAllergy: '',
+      alternateContact: '',
       makeups: [
         {
-          location: "",
+          location: '',
           date: new Date(),
-          readyTime: "",
+          readyTime: '',
         },
       ],
     },
-    mode: "all",
+    mode: 'all',
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "makeups",
+    name: 'makeups',
   });
 
   const onSubmit = (data: Schema) => {
     return new Promise((resolve) => {
       toast.promise(createMakeup(data), {
-        loading: "Submitting form...",
+        loading: 'Submitting form...',
         success: () => {
-          resolve("");
+          resolve('');
           form.reset();
-          return "Form submitted successfully";
+          return 'Form submitted successfully';
         },
         error: () => {
-          resolve("");
-          return "Something went wrong";
+          resolve('');
+          return 'Something went wrong';
         },
       });
     });
@@ -93,9 +92,9 @@ const BookingForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-[1000px] mx-auto px-5"
+        className="mx-auto max-w-[1000px] px-5"
       >
-        <div className="grid grid-cols-2 gap-4 mt-10 max-sm:grid-cols-1">
+        <div className="mt-10 grid grid-cols-2 gap-4 max-sm:grid-cols-1">
           <FormField
             name="name"
             control={form.control}
@@ -173,12 +172,12 @@ const BookingForm = () => {
         </div>
         <div className="mt-10">
           <div className="flex justify-between">
-            <h1 className="font-bold text-3xl mb-5">Makeups</h1>{" "}
+            <h1 className="mb-5 text-3xl font-bold">Makeups</h1>{' '}
             <Button
               className="!p-5"
               type="button"
               onClick={() =>
-                append({ location: "", date: new Date(), readyTime: "" })
+                append({ location: '', date: new Date(), readyTime: '' })
               }
             >
               <Plus width={20} height={20} />
@@ -242,14 +241,14 @@ const BookingForm = () => {
                           <Button
                             type="button"
                             className="block"
-                            variant={"outline"}
+                            variant={'outline'}
                           >
                             {form.getFieldState(`makeups.${index}.date`).isDirty
                               ? field.value.toDateString()
-                              : "Select Date"}
+                              : 'Select Date'}
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="max-w-none w-fit p-0">
+                        <PopoverContent className="w-fit max-w-none p-0">
                           <Calendar
                             onSelect={(date) => {
                               setIsOpen((prev) => {
@@ -262,7 +261,6 @@ const BookingForm = () => {
                             }}
                             mode="single"
                             selected={field.value}
-                            ISOWeek
                             fromDate={new Date()}
                           />
                         </PopoverContent>
@@ -273,7 +271,7 @@ const BookingForm = () => {
                 )}
               />
               <Button
-                variant={"ghost"}
+                variant={'ghost'}
                 className="w-max"
                 type="button"
                 onClick={() => remove(index)}

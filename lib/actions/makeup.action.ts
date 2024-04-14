@@ -1,18 +1,26 @@
-"use server";
+'use server';
 
-import Makeup from "../models/makeup.model";
-import { MakeupType } from "../models/makeup.model";
-import { connectToDB } from "../mongoose";
-import { transporter } from "../nodemailer";
-import dayjs from "dayjs";
+import { Schema } from '@/components/form/BookingForm';
+import Makeup, { MakeupType } from '../models/makeup.model';
+import { connectToDB } from '../mongoose';
+import { transporter } from '../nodemailer';
+import dayjs from 'dayjs';
 
-export const createMakeup = async (props: MakeupType) => {
+export const createMakeup = async (props: Schema) => {
   try {
-    await connectToDB();
+    connectToDB();
+
+    const data = {
+      ...props,
+      makeups: props.makeups.map((makeup) => ({
+        ...makeup,
+        date: new Date(makeup.date.getTime() + 19800000),
+      })),
+    };
 
     transporter.sendMail({
-      to: "ahluwalia.tanu@gmail.com",
-      subject: `Makeup Booking for ${props.name}`,
+      to: 'ahluwalia.tanu@gmail.com',
+      subject: `Makeup Booking for ${data.name}`,
       html: `
           <style>
             @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
@@ -30,34 +38,34 @@ export const createMakeup = async (props: MakeupType) => {
             >
               <div style="display: flex; padding-top: 16px">
                 <label for="name">Name: </label>
-                <div style="padding-left: 16px">${props.name}</div>
+                <div style="padding-left: 16px">${data.name}</div>
               </div>
               <div style="display: flex; padding-top: 16px">
                 <label for="name">Contact: </label>
-                <div style="padding-left: 16px">${props.contact}</div>
+                <div style="padding-left: 16px">${data.contact}</div>
               </div>
               <div style="display: flex; padding-top: 16px">
                 <label for="name">Occassion: </label>
                 <div style="padding-left: 16px">${
-                  props.occasion || "Not given"
+                  data.occasion || 'Not given'
                 }</div>
               </div>
               <div style="display: flex; padding-top: 16px">
                 <label for="name">Skin Allergy: </label>
                 <div style="padding-left: 16px">${
-                  props.skinAllergy || "No"
+                  data.skinAllergy || 'No'
                 }</div>
               </div>
               <div style="display: flex; padding-top: 16px">
                 <label for="name">Alternate Contact: </label>
                 <div style="padding-left: 16px">${
-                  props.alternateContact || "Not given"
+                  data.alternateContact || 'Not given'
                 }</div>
               </div>
 
               <div class="makeups">
                 <h2 style="color: blue">Makeups</h2>
-                ${props.makeups.map(
+                ${data.makeups.map(
                   (makeup, index) => `
                 <h5>${index + 1}.</h5>
                 <div>
@@ -68,7 +76,7 @@ export const createMakeup = async (props: MakeupType) => {
                   <div style="display: flex; padding-top: 16px;">
                     <label for="name">Date: </label>
                     <div style="padding-left: 16px">${dayjs(makeup.date).format(
-                      "DD MMM, YYYY"
+                      'DD MMM, YYYY',
                     )}</div>
                   </div>
                   <div style="display: flex; padding-top: 16px;">
@@ -76,7 +84,7 @@ export const createMakeup = async (props: MakeupType) => {
                     <div style="padding-left: 16px">${makeup.readyTime}</div>
                   </div>
                 </div>
-                `
+                `,
                 )}
               </div>
             </div>
@@ -85,11 +93,23 @@ export const createMakeup = async (props: MakeupType) => {
 
       `,
     });
-    await Makeup.create(props);
+    await Makeup.create(data);
 
-    return "Form submitted successfully";
+    return 'Form submitted successfully';
   } catch (error) {
     console.log(error);
-    throw new Error("Error submitting form");
+    throw new Error('Error submitting form');
+  }
+};
+
+export const getMakeups = async () => {
+  try {
+    connectToDB();
+    const data = await Makeup.aggregate([
+      { $sort: { 'makeups.location': -1 } },
+    ]);
+    return data as unknown as MakeupType[];
+  } catch (error) {
+    console.log('[GETMAKEUP]', error);
   }
 };

@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 .app {
-  @apply min-h-screen flex flex-col;
+  @apply flex min-h-screen flex-col;
 }
 
-button[aria-selected][name="day"] {
-  background-color: black;
+button[aria-selected][name='day'] {
+  background-color: #ff6872;
   color: white;
 }
