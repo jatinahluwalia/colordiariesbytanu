@@ -105,9 +105,7 @@ export const createMakeup = async (props: Schema) => {
 export const getMakeups = async () => {
   try {
     connectToDB();
-    const data = await Makeup.aggregate([
-      { $sort: { 'makeups.location': -1 } },
-    ]);
+    const data = await Makeup.aggregate([{ $sort: { 'makeups.date': -1 } }]);
     return data as unknown as MakeupType[];
   } catch (error) {
     console.log('[GETMAKEUP]', error);
